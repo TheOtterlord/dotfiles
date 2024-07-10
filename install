@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+GITHUB_USER=theotterlord
+GITHUB_REPO=dotfiles
+DIR="${HOME}/repos/${GITHUB_USER}/${GITHUB_REPO}"
+
+_process() {
+  echo "$(date) PROCESSING:  $@" >> $LOG
+  printf "$(tput setaf 6) %s...$(tput sgr0)\n" "$@"
+}
+
+_success() {
+  local message=$1
+  printf "%s✓ Success:%s\n" "$(tput setaf 2)" "$(tput sgr0) $message"
+}
+
+## install the git repository
+download_dotfiles() {
+  _process "→ Creating directory at ${DIR} and setting permissions"
+  mkdir -p "${DIR}"
+
+  _process "→ Downloading repository to /tmp directory"
+  curl -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
+
+  _process "→ Extracting files to ${DIR}"
+  tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DIR}"
+
+  _process "→ Removing tarball from /tmp directory"
+  rm -rf /tmp/${GITHUB_REPO}.tar.gz
+
+  [[ $? ]] && _success "${DIR} created, repository downloaded and extracted"
+
+  # Change to the dotfiles directory
+  cd "${DIR}"
+}
+
+## symlink dotfiles
+link_dotfiles() {
+  cp "${DIR}/.config/" "${HOME}" -r
+  cp "${DIR}/.local/" "${HOME}" -r
+}
+
+install_software() {
+  # TODO
+  sudo pacman -S blueman brightnessctl firefox github-cli grim hyprcursor hypridle hyprpaper kitty neovim obs-studio pavucontrol polkit-kde-agent slurp swaync tmux wofi unzip waybar wireplumber wl-clipboard xdg-desktop-portal-hyprland
+
+  sudo systemctl enable bluetooth
+
+  # yay
+  if ! [ -x "$(command -v yay)" ]; then
+    sudo pacman -S --needed git base-devel
+    git clone https://aur.archlinux.org/yay-bin.git "${HOME}/yay-bin"
+    cd "${HOME}/yay-bin"
+    makepkg -si
+    yay -Y --devel --save
+  fi
+
+  yay -S clipse hyprlock-git hyprpicker ttf-firacode-nerd vesktop-bin wlrobs-hg
+
+  # Node (via fnm)
+  if ! [ -x "$(command -v fnm)" ]; then
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+    fnm install --latest
+    eval "$(fnm env --use-on-cd --version-file-strategy=recursive --corepack-enabled)"
+    [[ $? ]] && _success "→ fnm installed"
+  else
+    _success "→ fnm already installed"
+  fi
+  corepack use pnpm@latest
+}
+
+install() {
+  #download_dotfiles
+  link_dotfiles
+  install_software
+}
+
+install
+

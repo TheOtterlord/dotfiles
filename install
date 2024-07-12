@@ -54,7 +54,7 @@ install_software() {
     yay -Y --devel --save
   fi
 
-  yay -S clipse hyprlock-git hyprpicker ttf-firacode-nerd vesktop-bin wlrobs-hg
+  yay -S clipse hyprlock-git hyprpicker ttf-firacode-nerd vesktop-bin wlogout wlrobs-hg
 
   # Node (via fnm)
   if ! [ -x "$(command -v fnm)" ]; then

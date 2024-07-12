@@ -40,10 +40,11 @@ link_dotfiles() {
 }
 
 install_software() {
-  # TODO
-  sudo pacman -S blueman brightnessctl firefox github-cli grim hyprcursor hypridle hyprpaper kitty neovim obs-studio pavucontrol polkit-kde-agent slurp swaync tmux wofi unzip waybar wireplumber wl-clipboard xdg-desktop-portal-hyprland
+  sudo pacman -S blueman brightnessctl btop firefox github-cli grim hyprcursor hypridle hyprpaper kitty nautilus neovim obs-studio pavucontrol polkit-kde-agent slurp swaync tlp tmux wofi unzip waybar wireplumber wl-clipboard xdg-desktop-portal-hyprland
+  #sudo pacman -R dolphin htop
 
   sudo systemctl enable bluetooth
+  sudo systemctl enable tlp
 
   # yay
   if ! [ -x "$(command -v yay)" ]; then

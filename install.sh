@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+set -eE
+
 GITHUB_USER=theotterlord
 GITHUB_REPO=dotfiles
 DIR="${HOME}/repos/${GITHUB_USER}/${GITHUB_REPO}"
